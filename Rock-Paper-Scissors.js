@@ -19,6 +19,7 @@ let player_name;
 let games_played = 0;
 //variable for win/loss streak
 let player_performance = 0;
+let performance_modifier = 0.02;
 //bools for difficulty
 let difficultyNormal = 0;
 let difficultyEasy = 1;
@@ -31,7 +32,6 @@ function StartGame()
     let gameStart = confirm("Press 'OK' to begin playing!");
     if(gameStart)
     {
-        games_played++;
         PlayerTurn();
         gameStart = false;
     }
@@ -40,6 +40,7 @@ function StartGame()
         return;
     }
 }
+
 //function for computer turn aka computer selection phase
 function ComputerPlayCycle()
 {
@@ -54,11 +55,12 @@ function DComputerPlayCycle()
 {
     let d = Math.random();
     
+    //adjust computer selection percentages to match difficulty 
     function EasyPlayCycle(d)
     {
         if(player_selection == rock)
         {
-            if(d <= 0.4)
+            if(d <= 0.45)
                 computer_selection = scissors;
             else if(d <= 0.7)
                 computer_selection = rock;
@@ -67,7 +69,7 @@ function DComputerPlayCycle()
         }  
         if(player_selection == paper)
         {
-            if(d <= 0.4)
+            if(d <= 0.45)
                 computer_selection = rock;
             else if(d <= 0.7)
                 computer_selection = paper;
@@ -76,7 +78,7 @@ function DComputerPlayCycle()
         }
         if(player_selection == scissors)
         {
-            if(d <= 0.4)
+            if(d <= 0.45)
                 computer_selection = paper;
             else if(d <= 0.7)
                 computer_selection = scissors;
@@ -90,27 +92,27 @@ function DComputerPlayCycle()
     {
         if(player_selection == rock)
         {
-            if(d <= 0.42)
+            if(d <= 0.45 + performance_modifier)
                 computer_selection = paper;
-            else if(d <= 0.7)
+            else if(d <= 0.73)
                 computer_selection = rock;
             else
                 computer_selection = scissors;
         }  
         if(player_selection == paper)
         {
-            if(d <= 0.42)
+            if(d <= 0.45 + performance_modifier)
                 computer_selection = scissors;
-            else if(d <= 0.7)
+            else if(d <= 0.73)
                 computer_selection = paper;
             else
                 computer_selection = rock;
         }
         if(player_selection == scissors)
         {
-            if(d <= 0.38)
+            if(d <= 0.40 + performance_modifier)
                 computer_selection = rock;
-            else if(d <= 0.71)
+            else if(d <= 0.73)
                 computer_selection = scissors;
             else
                 computer_selection = paper;
@@ -119,6 +121,7 @@ function DComputerPlayCycle()
         PlayRound(player_selection, computer_selection);
     }
     
+    //check the current difficulty modifier
     if(current_difficulty == difficultyEasy)
     {
         EasyPlayCycle(d);
@@ -132,6 +135,7 @@ function DComputerPlayCycle()
         HardPlayCycle(d);
     }
 }
+
 //function for player turn aka player selection phase
 function PlayerTurn()
 {
@@ -168,6 +172,7 @@ function PlayerTurn()
     else
         DComputerPlayCycle();
 }
+
 //function for Round Engagement
 function PlayRound(player_selection, computer_selection)
 {
@@ -226,7 +231,8 @@ function PlayRound(player_selection, computer_selection)
         }
     }
 }
-//function for round win/loss/tie
+
+//functions for round win/loss/tie
 function RoundWin()
 {
     player_points++;
@@ -276,9 +282,11 @@ function NextRound()
     PlayerTurn();
     }
 }
+
 //function for game won
 function GameWon() 
 {
+    games_played++;
     player_performance++;
     alert("Congrats, you won!");
     PlayAgain();
@@ -286,6 +294,7 @@ function GameWon()
 //function for game over
 function GameOver()
 {
+    games_played++;
     player_performance--;
     alert("You lost!");
     PlayAgain();
@@ -305,7 +314,7 @@ function PlayAgain()
     {
         console.log("Games played: " + games_played);
         SetDifficulty();
-        StartGame();
+        PlayerTurn();
     }
     else
     {
@@ -315,30 +324,47 @@ function PlayAgain()
 //function for end game
 function EndGame() 
 {
-    player_points = 0;
-    computer_points = 0;
-    current_round = 0;
-    player_selection = null;
-    computer_selection = null;
-    alert("Thank you for playing!")
-    return;
+    let input = confirm("Are you sure you want to quit playing? Press 'OK' to Quit")
+    
+    if(input)
+    {
+        player_points = 0;
+        computer_points = 0;
+        current_round = 0;
+        player_selection = null;
+        computer_selection = null;
+        alert("Thank you for playing!")
+        StartGame();
+    }
+    else
+    {
+        return PlayerTurn();
+    }
 }
+
 //function for setting difficulty
 function SetDifficulty()
 {
-    if(player_performance > 2)
+    performance_modifier = 0.02;
+
+    if(player_performance >= 2)
     {
         current_difficulty = difficultyHard;
+        performance_modifier = performance_modifier * player_performance;
+        console.log("set hard")
     }
-    else if(player_performance < -2)
+    else if(player_performance <= -2)
     {
         current_difficulty = difficultyEasy;
+        console.log("set easy")
     }
     else    
     {
         current_difficulty = difficultyNormal;
+        console.log("set normal")
     }
-    console.log("current performance: " + player_performance)
+    console.log("current performance: " + player_performance);
+    console.log("performance modifier: " + performance_modifier);
 }
 
 StartGame()
