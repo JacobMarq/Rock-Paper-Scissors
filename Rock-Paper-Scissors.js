@@ -60,7 +60,7 @@ function DComputerPlayCycle()
     {
         if(player_selection == rock)
         {
-            if(d <= 0.45)
+            if(d <= 0.45 - performance_modifier)
                 computer_selection = scissors;
             else if(d <= 0.7)
                 computer_selection = rock;
@@ -69,7 +69,7 @@ function DComputerPlayCycle()
         }  
         if(player_selection == paper)
         {
-            if(d <= 0.45)
+            if(d <= 0.45 - performance_modifier)
                 computer_selection = rock;
             else if(d <= 0.7)
                 computer_selection = paper;
@@ -78,7 +78,7 @@ function DComputerPlayCycle()
         }
         if(player_selection == scissors)
         {
-            if(d <= 0.45)
+            if(d <= 0.45 - performance_modifier)
                 computer_selection = paper;
             else if(d <= 0.7)
                 computer_selection = scissors;
@@ -345,12 +345,23 @@ function EndGame()
 //function for setting difficulty
 function SetDifficulty()
 {
-    performance_modifier = 0.02;
+    performance_modifier = 0.2;
+    
+    if(!player_performance == 0)
+    {
+        performance_modifier = performance_modifier * player_performance;        
+    }
+    if(player_performance < 0)
+    {
+        if(performance_modifier > 0)
+        {
+            performance_modifier = performance_modifier * -1;
+        }
+    }
 
     if(player_performance >= 2)
     {
         current_difficulty = difficultyHard;
-        performance_modifier = performance_modifier * player_performance;
         console.log("set hard")
     }
     else if(player_performance <= -2)
