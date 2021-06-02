@@ -62,11 +62,14 @@ button:hover {
     background-color: white;
     outline-style: groove;
     box-shadow: 0 0 11px black;
+    transition: all .1s ease-in;
 }
 .selectionObject:hover{
     cursor: pointer;
     box-shadow: 0 0 5px black;
-    outline-color: white;
+    outline-style: groove;
+    outline-width: 8px;
+    scale: .9;
 }
 #rockText{
     text-align: center;
@@ -435,6 +438,7 @@ button:hover {
     text-shadow: 0 0 2px yellow,
      0 0 8px rgb(241, 241, 2),
      0 0 10px rgb(255, 255, 114);
+     transition: all .5s ease;
 }
 
 
@@ -618,6 +622,12 @@ button:hover {
     outline-style: solid;
     outline-width: 2px;
     box-shadow: 0 0 15px yellow;
-    box-shadow: 0 0 25px rgb(241, 241, 2);
-    box-shadow: 0 0 50px rgb(255, 255, 114);
+    box-shadow: 0 0 15px rgb(241, 241, 2);
+    box-shadow: 0 0 35px rgb(255, 255, 114);
+}
+#endPicture:hover{
+    box-shadow: 0 0 25px yellow;
+    box-shadow: 0 0 50px rgb(241, 241, 2);
+    box-shadow: 0 0 70px rgb(255, 255, 114);
+    scale: 1.1;
 }

@@ -401,6 +401,7 @@ function NextRound()
 function GameWon() 
 {
     StreakManager();
+    SwitchWinnerPhoto();
     player_performance++;
     gamesWon++;
     gameResultContainer.style.display = "block";
@@ -408,27 +409,30 @@ function GameWon()
     _gameResult.textContent = "YOU WIN!";
     _gameResult.classList.add("you");
     _gameEndMessage.textContent = "Nice work! You really taught that bully a lesson."
-    SwitchWinnerPhoto();
 }
 //function for game over
 function GameOver()
 {
     StreakManager();
+    SwitchWinnerPhoto();
     player_performance--;
     gamesLost++;
     gameResultContainer.style.display = "block";
     _playAgain.style.display = "flex";
     _gameResult.textContent = "YOU LOSE!";
     _gameResult.classList.add("opponent");
-    _gameEndMessage.textContent = "Mission failed! We'll get him next time."
-    SwitchWinnerPhoto();
+    _gameEndMessage.textContent = "Mission failed! We'll get him next time."    
 }
 function SwitchWinnerPhoto()
 {
     if(!wonCurrentGame)
+    {
         document.getElementById("endPicture").src = "Images/SchoolBully.jpeg";
+    }
     else
+    {
         document.getElementById("endPicture").src = "Images/PlayerOne.jpeg";
+    }
 }
 
 //function for play again
@@ -444,6 +448,7 @@ function PlayAgain()
     playertwoscore.textContent = computer_points;
     playeronescore.textContent = player_points;
     isGameEnded = false;
+    endPicture.classList.remove("endPictureGlow");
     UpdateAnalytics();
     StartGame();
 }
@@ -458,6 +463,7 @@ function EndGame()
     
     if(input)
     {
+        endPicture.classList.remove("endPictureGlow");
         currentRoundWinStreak = 0;
         currentWinningSelectionStreak = 0;
         quitGameContainer.style.display = "none";
