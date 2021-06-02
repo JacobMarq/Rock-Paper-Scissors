@@ -6,4 +6,4 @@ What I learned:
 - How to randomly select elements from an array
 - How to manipulate probability using a single random value and ranges
 - A simple way to collect data on a games progression
-- flexboxs
+- flexboxes
