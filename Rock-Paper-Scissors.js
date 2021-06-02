@@ -6,10 +6,25 @@ let player_selection;
 const rock = ("rock");
 const paper = ("paper");
 const scissors = ("scissors");
+const quitGame = ('quit');
 //array for rock, paper, and scissors
 selection_array = [rock, paper, scissors];
+//player attack/defend phrase
+rockAttack_array = ["*throws rock*", "*skips stone at ankles*", "*bashes with boulder*"];
+paperAttack_array = ["*papercuts*", "*calls in paper airstrike*", "*sends spitwad*"];
+scissorsAttack_array = ["*wildly swings scissors*", "*drops scissors at opponets feet*", "*cuts hair atrociously*"];
+rockDefend_array = ["*stone helmet*", "*moves mountain*", "*big boulder defense*"];
+paperDefend_array = ["*has a paper defense*", "*builds a paper wall*", "*uses paper mache shield*"];
+scissorsDefend_array = ["*opens scissor blade*", "*activates scissor trapcard*", "*stabby stabby*"];
+//round result array
+roundTie_array = ["Your attack was completely ineffective", "You did zero damage", 
+"This round accomplished nothing", "Nice try but, not really..."];
+roundWin_array = [`${playertwousername.textContent} was left with crippling depression`, 
+`${playertwousername.textContent} fell victim to your abuse`, `${playertwousername.textContent}'s foresight wasn't strong enough` ];
+roundLoss_array = [`${playeroneusername.textContent} can no longer function properly`, 
+`${playeroneusername.textContent} got caught slipping`, `${playeroneusername.textContent} fell victim to extreme bullying`];
 //variable for current round
-let current_round = 0;
+let current_round = 1;
 //variables for player and computer points
 let player_points = 0;
 let computer_points = 0;
@@ -25,29 +40,53 @@ let difficultyNormal = 0;
 let difficultyEasy = 1;
 let difficultyHard = 2;
 let current_difficulty = difficultyNormal;
+//analytic variables
+let playerPickedRock = 0;
+let playerPickedPaper = 0;
+let playerPickedScissors = 0;
+let compPickedRock = 0;
+let compPickedPaper = 0;
+let compPickedScissors = 0;
+let gamesWon = 0;
+let gamesLost = 0;
+let longestGameWinStreak = 0;
+let currentGameWinStreak = 0;
+let longestRoundWinStreak = 0;
+let currentRoundWinStreak = 0;
+let longestWinningSelectionStreak = 0;
+let currentWinningSelectionStreak = 0;
+let lastSelection = null;
+let streakItem = null;
+let wonCurrentGame = false;
+let wonCurrentRound = false;
+let isGameEnded = false;
+//DOM variables
+const container = document.querySelector('#begin-game');
+const gameDescription = document.createElement('div');
+const gameHeader = document.createElement('p');
 
 //function for game start
 function StartGame()
 {
-    let gameStart = confirm("Press 'OK' to begin playing!");
-    if(gameStart)
-    {
-        PlayerTurn();
-        gameStart = false;
-    }
-    else
-    {
-        return;
-    }
+    homepagebtns.style.display = "none";
+    quitGameContainer.style.display = "flex";
+    selectionContainer.style.display = "flex";
+    roundResult.style.display = "flex";
+    playerscontainer.style.display = "flex";
+    _quitGame.style.display = "flex";
+    current_round= 1;
+    roundNumber.textContent = "Round: " + current_round;
+    SetDifficulty();
 }
+
 
 //function for computer turn aka computer selection phase
 function ComputerPlayCycle()
 {
     //select a random variable from the array
     computer_selection = selection_array[Math.floor(Math.random() * selection_array.length)];
-    console.log("Computer choice: " + computer_selection);
     //initiate the engagement phase of the round
+    DefendPhrase(computer_selection);
     PlayRound(player_selection, computer_selection);
 }
 //difficulty based ComputerPlayCycle
@@ -85,7 +124,7 @@ function DComputerPlayCycle()
             else
                 computer_selection = rock;
         }
-        console.log("Computer choice: " + computer_selection);
+        DefendPhrase(computer_selection);
         PlayRound(player_selection, computer_selection); 
     }
     function HardPlayCycle(d)
@@ -117,7 +156,7 @@ function DComputerPlayCycle()
             else
                 computer_selection = paper;
         }
-        console.log("Computer choice: " + computer_selection);
+        DefendPhrase(computer_selection);
         PlayRound(player_selection, computer_selection);
     }
     
@@ -135,65 +174,89 @@ function DComputerPlayCycle()
         HardPlayCycle(d);
     }
 }
+function DefendPhrase(defendSelection)
+{
+    switch(defendSelection)
+    {
+        case (rock):
+            playertwoattackphrase.textContent = rockDefend_array[Math.floor(Math.random() * rockDefend_array.length)];
+            compPickedRock++;
+            break;
+        case (paper):
+            playertwoattackphrase.textContent = paperDefend_array[Math.floor(Math.random() * paperDefend_array.length)];
+            compPickedPaper++;
+            break;
+        case (scissors):
+            playertwoattackphrase.textContent = scissorsDefend_array[Math.floor(Math.random() * scissorsDefend_array.length)];
+            compPickedScissors++;
+            break;                    
+    }
+}
 
 //function for player turn aka player selection phase
-function PlayerTurn()
+function PlayerTurn(selection)
 {
-    function ImproperSelection()
+    //allow player to make a selection
+    player_selection = selection;
+    AttackPhrase(player_selection);
+    //check wether selection was made and if it is possible
+    //otherwise resets player selection phase
+    if(player_selection === null || player_selection === undefined)
     {
-        console.log("You failed to make a proper selection.")
-        PlayerTurn();
+        return;
     }
-    function PressedCancel()
+    else if(player_selection === quitGame)
     {
         EndGame();
     }
-
-    //allow player to make a selection
-    player_selection = prompt("Make your choice Rock, Paper, or Scissors: ");
-    //check wether selection was made and if it is possible
-    //otherwise resets player selection phase
-    if(player_selection === null)
-    {
-        PressedCancel();
-    }
-    
-    player_selection = player_selection.toLowerCase();
-    
-    if(selection_array.indexOf(player_selection) === -1)
-    {
-        ImproperSelection();
-    }
-
-    console.log("Player choice: " + player_selection);
-    //initiate computer selection phase
-    if (games_played < 2)
-        ComputerPlayCycle();
     else
-        DComputerPlayCycle();
+    {
+        //initiate computer selection phase
+        if (games_played < 2)
+            ComputerPlayCycle();
+        else
+            DComputerPlayCycle();
+    }
 }
+function AttackPhrase(attackSelection)
+{
+    switch(attackSelection)
+    {
+        case (rock):
+            playeroneattackphrase.textContent = rockAttack_array[Math.floor(Math.random() * rockAttack_array.length)];
+            playerPickedRock++;
+            break;
+        case (paper):
+            playeroneattackphrase.textContent = paperAttack_array[Math.floor(Math.random() * paperAttack_array.length)];
+            playerPickedPaper++;
+            break;
+        case (scissors):
+            playeroneattackphrase.textContent = scissorsAttack_array[Math.floor(Math.random() * scissorsAttack_array.length)];
+            playerPickedScissors++;
+            break;                    
+    }
+}
+
 
 //function for Round Engagement
 function PlayRound(player_selection, computer_selection)
 {
     //check if either selection phase failed
     //if so return to selection phase
-    if(player_selection === null || computer_selection === null) 
+    if(computer_selection === null) 
     {
-        player_selection = null;
-        computer_selection = null;
-        return PlayRound();
+        return PlayerTurn(player_selection);
     }
     else 
     {
         //check if both players made same selection for a tie
         //if not compare player selection to computer selection
         //determine who wins/loses the round
-        if(player_selection === computer_selection.toLowerCase())
+        if(player_selection === computer_selection)
         {
             RoundTie();
         }
-        else if(player_selection === "rock")
+        else if(player_selection === rock)
         {
             switch(computer_selection)
             {
@@ -205,7 +268,7 @@ function PlayRound(player_selection, computer_selection)
                     break;     
             }
         }
-        else if(player_selection === "paper")
+        else if(player_selection === paper)
         {
             switch(computer_selection)
             {
@@ -217,7 +280,7 @@ function PlayRound(player_selection, computer_selection)
                     break;     
             }
         }
-        else if(player_selection === "scissors")
+        else if(player_selection === scissors)
         {
             switch(computer_selection)
             {
@@ -235,114 +298,192 @@ function PlayRound(player_selection, computer_selection)
 //functions for round win/loss/tie
 function RoundWin()
 {
-    player_points++;
-    console.log("Round Won!");
-    console.log("Player: " + player_points);
-    console.log("Computer: " + computer_points);
-    NextRound();
+    wonCurrentRound = true;
+    container.classList.add("no_click");
+    RoundResultAfterDelay(1);
 }
 function RoundLoss()
 {
-    computer_points++;
-    console.log("Round lost!");
-    console.log("Computer: " + computer_points);
-    console.log("Player: " + player_points);
-    NextRound();
+    wonCurrentRound = false;
+    container.classList.add("no_click");
+    RoundResultAfterDelay(-1);
 }
 function RoundTie()
 {
-    console.log("Round is a tie!");
-    NextRound();
+    container.classList.add("no_click");
+    RoundResultAfterDelay(0);
 }
+function RoundResultAfterDelay(result)
+{
+    function RoundResult()
+    {
+        lastSelection = player_selection;
+        if(result > 0)
+        {
+            playeronescore.classList.add("pointreward");
+            player_points++;
+            playeronescore.textContent = player_points;
+            roundResult.textContent = 'ROUND WON!';
+            roundResult.style.color = "green";
+            roundResultMessage.textContent = roundWin_array[Math.floor(Math.random() * roundWin_array.length)];
+            NextRoundAfterDelay();
+        }
+        else if(result < 0)
+        {
+            playertwoscore.classList.add("pointreward");
+            computer_points++;
+            playertwoscore.textContent = computer_points;
+            roundResult.textContent = 'ROUND LOST!';
+            roundResult.style.color = "red";
+            roundResultMessage.textContent = roundLoss_array[Math.floor(Math.random() * roundLoss_array.length)];
+            NextRoundAfterDelay();
+        }
+        else
+        {
+            roundResult.textContent = 'ROUND TIE!';
+            roundResult.style.color = "black";
+            roundResultMessage.textContent = roundTie_array[Math.floor(Math.random() * roundTie_array.length)];
+            NextRoundAfterDelay();
+        }
+    }
+    StreakManager();
+    window.setTimeout(RoundResult, 500);
+}
+
 //function for Round Progression
+function NextRoundAfterDelay()
+{
+    window.setTimeout(NextRound,1000);
+}
 function NextRound()
 {
-    
+    UpdateAnalytics();
+    playeronescore.classList.remove("pointreward");
+    playertwoscore.classList.remove("pointreward");
+    wonCurrentRound = false;
+    player_selection = null;
+    computer_selection = null;
+    container.classList.remove("no_click");
+    roundResultMessage.textContent = null;
+    roundResult.textContent = null;
+    playeroneattackphrase.textContent = null;
+    playertwoattackphrase.textContent = null;
     //check if either player has won the game
     if(player_points == 5 || computer_points == 5)
     {
         //once determind progess to game win/loss events
+        selectionContainer.style.display = "none";
+        roundResult.style.display = "none";
+        playerscontainer.style.display = "none";
+        games_played++;
+        isGameEnded = true;
 
         if(player_points == 5)
         {
+            wonCurrentGame = true;
             GameWon();
         }
-        else(computer_points == 5)
+        else if(computer_points == 5)
         {
+            wonCurrentGame = false;
             GameOver();
         }
     } 
     //reset selections and progress to next round
     else 
-    {
-    player_selection = null;
-    computer_selection = null;        
-    current_round++;
-    console.log("Round: " + current_round);
-    PlayerTurn();
+    {        
+        current_round++;
+        roundNumber.textContent = "Round: " + current_round; 
     }
 }
 
 //function for game won
 function GameWon() 
 {
-    games_played++;
+    StreakManager();
     player_performance++;
-    alert("Congrats, you won!");
-    PlayAgain();
+    gamesWon++;
+    gameResultContainer.style.display = "block";
+    _playAgain.style.display = "flex";
+    _gameResult.textContent = "YOU WIN!";
+    _gameResult.classList.add("you");
+    _gameEndMessage.textContent = "Nice work! You really taught that bully a lesson."
+    SwitchWinnerPhoto();
 }
 //function for game over
 function GameOver()
 {
-    games_played++;
+    StreakManager();
     player_performance--;
-    alert("You lost!");
-    PlayAgain();
+    gamesLost++;
+    gameResultContainer.style.display = "block";
+    _playAgain.style.display = "flex";
+    _gameResult.textContent = "YOU LOSE!";
+    _gameResult.classList.add("opponent");
+    _gameEndMessage.textContent = "Mission failed! We'll get him next time."
+    SwitchWinnerPhoto();
 }
+function SwitchWinnerPhoto()
+{
+    if(!wonCurrentGame)
+        document.getElementById("endPicture").src = "Images/SchoolBully.jpeg";
+    else
+        document.getElementById("endPicture").src = "Images/PlayerOne.jpeg";
+}
+
 //function for play again
 function PlayAgain()
-{
-    //confirm with the player if they'd like to play again
-    //if not thank them for playing
-    let input = confirm("Press 'OK' to play again!");
-    
+{    
+    gameResultContainer.style.display = "none";
+    _playAgain.style.display = "none";
+    _gameResult.classList.remove("you");
+    _gameResult.classList.remove("opponent");
     player_points = 0;
     computer_points = 0;
-    current_round = 0;
-    
-    if(input)
-    {
-        console.log("Games played: " + games_played);
-        SetDifficulty();
-        PlayerTurn();
-    }
-    else
-    {
-        EndGame();
-    }
+    current_round = 1;
+    playertwoscore.textContent = computer_points;
+    playeronescore.textContent = player_points;
+    isGameEnded = false;
+    UpdateAnalytics();
+    StartGame();
 }
 //function for end game
 function EndGame() 
 {
+    UpdateAnalytics();
+    player_selection = null;
+    computer_selection = null;
+    lastSelection = null;
     let input = confirm("Are you sure you want to quit playing? Press 'OK' to Quit")
     
     if(input)
     {
+        currentRoundWinStreak = 0;
+        currentWinningSelectionStreak = 0;
+        quitGameContainer.style.display = "none";
+        _playAgain.style.display = "none";
+        selectionContainer.style.display = "none";
+        roundResult.style.display = "none";
+        playerscontainer.style.display = "none";
+        gameResultContainer.style.display = "none";
+        _gameResult.classList.remove("you");
+        _gameResult.classList.remove("opponent");
         player_points = 0;
         computer_points = 0;
-        current_round = 0;
-        player_selection = null;
-        computer_selection = null;
+        current_round = 1;
+        playertwoscore.textContent = computer_points;
+        playeronescore.textContent = player_points;
         alert("Thank you for playing!")
-        StartGame();
+        homepagebtns.style.display = "flex";
     }
     else
     {
-        return PlayerTurn();
+        return;
     }
 }
 
-//function for setting difficulty
+
+//independent functions
 function SetDifficulty()
 {
     performance_modifier = 0.2;
@@ -362,20 +503,117 @@ function SetDifficulty()
     if(player_performance >= 2)
     {
         current_difficulty = difficultyHard;
-        console.log("set hard")
+        performance_modifier = performance_modifier * player_performance;
     }
     else if(player_performance <= -2)
     {
         current_difficulty = difficultyEasy;
-        console.log("set easy")
     }
     else    
     {
         current_difficulty = difficultyNormal;
-        console.log("set normal")
     }
-    console.log("current performance: " + player_performance);
-    console.log("performance modifier: " + performance_modifier);
+}
+function StreakManager()
+{
+    if(isGameEnded)
+    {
+        if(wonCurrentGame)
+        {
+            currentGameWinStreak++;
+            if(longestGameWinStreak < currentGameWinStreak)
+            {
+                longestGameWinStreak = currentGameWinStreak;
+            }
+        }
+        else
+        {
+            currentGameWinStreak = 0;
+        }
+    }
+    else
+    {
+        if(wonCurrentRound)
+        {
+            currentRoundWinStreak++;
+            if(longestRoundWinStreak < currentRoundWinStreak)
+            {
+                longestRoundWinStreak = currentRoundWinStreak;
+            }
+            if(lastSelection == player_selection)
+            {
+                currentWinningSelectionStreak++;
+                if(currentWinningSelectionStreak > longestWinningSelectionStreak)
+                {
+                    longestWinningSelectionStreak = currentWinningSelectionStreak;
+                    streakItem = player_selection.toUpperCase();
+                }
+            }
+            else if(lastSelection === null)
+            {
+                currentWinningSelectionStreak++;
+                if(currentWinningSelectionStreak > longestWinningSelectionStreak)
+                {
+                    longestWinningSelectionStreak = currentWinningSelectionStreak;
+                    streakItem = player_selection.toUpperCase();
+                }
+            }
+            else
+            {
+                currentWinningSelectionStreak = 1;
+            }
+        }
+        else
+        {
+            currentWinningSelectionStreak = 0;
+            currentRoundWinStreak = 0;
+        }
+    }
+}
+function OpenAnalytics()
+{
+    homepagebtns.style.display = "none";
+    analyticsContainer.style.display = "block";
+}
+function CloseAnalytics()
+{
+    analyticsContainer.style.display = "none";
+    homepagebtns.style.display = "flex";
+}
+function UpdateAnalytics()
+{
+    roundStreak.textContent = longestRoundWinStreak;
+    currentGameStreak.textContent = currentGameWinStreak;
+    gameStreak.textContent = longestGameWinStreak;
+    streakItemID.textContent = streakItem;
+    selectionStreak.textContent = longestWinningSelectionStreak;
+    rockHistoryCount.textContent = playerPickedRock;
+    paperHistoryCount.textContent = playerPickedPaper;
+    scissorsHistoryCount.textContent = playerPickedScissors;
+    rockHistoryCountComp.textContent = compPickedRock;
+    paperHistoryCountComp.textContent = compPickedPaper;
+    scissorsHistoryCountComp.textContent = compPickedScissors;
+    gameWinCount.textContent = gamesWon;
+    gameLossCount.textContent = gamesLost;
 }
 
-StartGame()
+UpdateAnalytics();
+
+_playAgain.addEventListener('click', () => {PlayAgain();});
+_start.addEventListener('click', () => {StartGame();});
+_rock.addEventListener('click', ()=> PlayerTurn(rock));
+_paper.addEventListener('click', ()=> PlayerTurn(paper));
+_scissors.addEventListener('click', ()=> PlayerTurn(scissors));
+_quitGame.style.display = "none";
+_quitGame.addEventListener('click', ()=> PlayerTurn(quitGame));
+_analytics.addEventListener('click', ()=> OpenAnalytics());
+_closeAnalytics.addEventListener('click', ()=> CloseAnalytics());
+selectionContainer.style.display = "none";
+roundResult.style.display = "none";
+playerscontainer.style.display = "none";
+analyticsContainer.style.display = "none";
+gameResultContainer.style.display = "none";
+_playAgain.style.display = "none";
+playerOneIDName.textContent = playeroneusername.textContent;
+playerTwoIDName.textContent = playertwousername.textContent;
+roundNumber.textContent = "Round: " + current_round;

@@ -2,10 +2,141 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="Rock_Paper_Scissors.css">
         <title>Rock Paper Scissors</title>
     </head>
     
     <body>
+        <div id='loader'>LOADING...</div>
+
+        <div id="begin-game">
+            <div id="header">
+                <h1 id="backoftheclass">BACK OF THE CLASS</h1>
+                <p id="rockpaperscissors">Rock, Paper, Scissors</p>
+            </div>
+            <div id="analyticsContainer">
+                <div id="analyticsWindow">
+                <ul id = "gamesWonContainer">
+                    <li id="_gamesWon" class="you">Games Won: <span id="gameWinCount"></span></li>
+                    <li id="_gamesLost" class="opponent">Games Lost: <span id="gameLossCount"></span></li>
+                    <li id="_gamesCurrentWinStreak">Current Win Streak: <span id="currentGameStreak"></span></li>
+                </ul>
+                <ul id = "streaksWindow">
+                    <li id="_gamesLongestWinStreak" class="streak">Longest Win Streak: <span id="gameStreak"></span></li>
+                    <li id="_roundWinStreak" class="streak">Longest Round Win Streak: <span id="roundStreak"></span></li>
+                    <li id="_winningSelectionStreak" class="streak">Same Selection Win Streak: <span id="streakItemID"></span> <span id="selectionStreak"></span></li>
+                </ul>
+                <div id="selectionHistory">
+                    <ul id = "playerSelectionStats">
+                        <li id="playerOneIDName"></li>
+                        <li id="playerOnePicture">
+                            <img id= "playerOnePictureID" src="Images/PlayerOne.jpeg" style="width: 100px;height: 120px;outline-style: solid;">
+                        </li>
+                        <li id="rockCount" class ="historyCount">
+                            <img id="rockHistory" src="Images/Rock.png" style="width: 40px;height: 40px;outline-style: groove;">
+                            <p id="rockHistoryCount" class = "count you">3</p>
+                        </li>
+                        <li id="paperCount" class ="historyCount">
+                            <img id="paperHistory" src="Images/Paper.jpeg" style="width: 40px;height: 40px;outline-style: groove;">
+                            <p id="paperHistoryCount" class = "count you">3</p>
+                        </li>
+                        <li id="scissorsCount" class ="historyCount">
+                            <img id="scissorsHistory" src="Images/Scissors.png" style="width: 40px;height: 40px;outline-style: groove;">
+                            <p id="scissorsHistoryCount" class = "count you">3</p>
+                        </li>
+                    </ul>
+                    <ul id = "compSelectionStats">
+                        <li id="playerTwoIDName"></li>
+                        <li id="playerTwoPicture">
+                            <img id= "playerTwoPictureID" src="Images/SchoolBully.jpeg" style="width: 100px;height: 120px;outline-style: solid;">
+                        </li>
+                        <li id="rockCountComp" class ="historyCount">
+                            <img id="rockHistoryComp" src="Images/Rock.png" style="width: 40px;height: 40px;outline-style: groove;">
+                            <p id="rockHistoryCountComp" class = "count opponent">3</p>
+                        </li>
+                        <li id="paperCountComp" class ="historyCount">
+                            <img id="paperHistoryComp" src="Images/Paper.jpeg" style="width: 40px;height: 40px;outline-style: groove;">
+                            <p id="paperHistoryCountComp" class = "count opponent">3</p>
+                        </li>
+                        <li id="scissorsCountComp" class ="historyCount">
+                            <img id="scissorsHistoryComp" src="Images/Scissors.png" style="width: 40px;height: 40px;outline-style: groove;">
+                            <p id="scissorsHistoryCountComp" class = "count opponent">3</p>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+                <div id="closeAnalyticsContainer">
+                    <li id="_closeAnalytics" class="exitButton">Close Analytics</li>
+                </div>
+            </div>
+            <div id ="playerscontainer">
+                <div id ="playerone">
+                    <p id="playeroneusername">You</p>
+                    <img id="playeroneicon" src="Images/PlayerOne.jpeg" style="width: 190px;height: 250px;">
+                    <p id="playeronescore" class="you">0</p>
+                    <p id="playeroneattackphrase"></p>
+                </div>
+                <div class ="roundResultContainer">
+                    <h2 id ="roundNumber"></h2>
+                    <h2 id ="roundResult"></h2>
+                    <p id="roundResultMessage"></p>
+                </div>
+                <div id ="playertwo">
+                    <p id="playertwousername">School Bully</p>
+                    <img id="playertwoicon" src="Images/SchoolBully.jpeg" style="width: 190px;height: 250px;">
+                    <p id="playertwoscore" class="opponent">0</p>
+                    <p id="playertwoattackphrase"></p>
+                </div>
+            </div>
+            <div id ="selectionContainer">
+                <div class ="selection">
+                    <div id="_rock" class="selectionObject">
+                        <img src="Images/Rock.png" alt="rockImage" style="width: 100%;height: 70px;">
+                        <p id ="rockText" class="selectionText">Rock</p>
+                    </div>
+                    <div id="_paper" class="selectionObject">
+                        <img src="Images/Paper.jpeg" alt="paperImage" style="width: 100%;height: 70px;">
+                        <p id ="paperText" class="selectionText">Paper</p>
+                    </div>
+                    <div id="_scissors" class="selectionObject">
+                        <img src="Images/Scissors.png" alt="scissorsImage" style="width: 100%;height: 70px;">
+                        <p id ="scissorsText"  class="selectionText">Scissors</p>
+                    </div>
+                </div>
+            </div>
+            <div id ="gameResultContainer">
+                <ul id="gameEndScreen">
+                    <li id="_gameResult">YOU WIN!</li>
+                </ul>
+                <ul id="endPhotosContainer">
+                    <img id ="endPicture" src="Images/PlayerOne.jpeg">
+                </ul>
+                <ul id="gameEndTextContainer">
+                    <li id="_gameEndMessage">Nice work. You really showed that bully not to mess with you!</li>
+                </ul>
+            </div>
+            <div id="quitGameContainer">
+                <li id="_quitGame" class="exitButton">Quit Game</li>
+                <li id="_playAgain" class="exitButton">Play Again</li>
+            </div>
+            
+            <ul id = "homepagebtns">
+                <li id="_start">Begin Game</li>
+                <li id="_multiplayer">Play With Friends</li>
+                <li id="_analytics">Analytics</li>
+            </ul>
+        </div>
+
         <script src="Rock-Paper-Scissors.js"></script>
+        <script>
+            let loader = document.getElementById('loader');
+            let gamebegin = document.getElementById('begin-game');
+            if(loader){
+                loader.style.display = "none";
+            }
+            if(gamebegin){
+                gamebegin.style.visibility ="visible";
+            }
+        </script>
     </body>
 </html>
